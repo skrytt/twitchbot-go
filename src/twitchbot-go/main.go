@@ -22,7 +22,7 @@ func main() {
 
     client, err := clientlib.New(config)
     if err != nil {
-        log.Fatalf("Could not connect to IRC server")
+        log.Fatalf("Could not connect to IRC server: '%s'", err)
     }
 
     log.Println("Success (client %r)", client)
