@@ -31,7 +31,14 @@ func New(config configlib.Config) (*girc.Client, error) {
         log.Printf("Connected to '%s:%d'", config.Irc.ServerHost, config.Irc.ServerPort)
 
         // Try to join the configured channel
-        // TODO
+        c.Cmd.Join(fmt.Sprintf("#%s", strings.ToLower(config.Irc.ClientChannel)))
+    })
+
+    client.Handlers.Add(girc.JOIN, func(c *girc.Client, e girc.Event) {
+        log.Printf("Joined channel '%s'", e.Params[0])
+
+        // For now just say hello
+        c.Cmd.Message(e.Params[0], fmt.Sprintf("Hello it's me, %s", config.Irc.ClientNickname))
     })
 
     // Actually try to connect
