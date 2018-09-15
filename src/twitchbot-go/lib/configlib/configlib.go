@@ -10,18 +10,18 @@ type Config struct {
         BaseUrl             string
         ClientId            string
         RedirectUri         string
+        Token               string
     }
     Irc                 struct {
         ServerHost          string
         ServerPort          int
-        Token               string
         ClientCapabilities  []string
         ClientNickname      string
         ClientChannel       string
     }
 }
 
-// loadConfig: Load a JSON config from disk.
+// Load: Load a JSON config from disk.
 func Load(path string) (Config, error) {
     var config Config
 

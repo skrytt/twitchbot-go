@@ -1,0 +1,19 @@
+{
+    "Authorization": {
+        "BaseUrl": "https://id.twitch.tv/oauth2/authorize",
+        "ClientId": "",
+        "RedirectUri": "http://localhost",
+        "Token": ""
+    },
+    "Irc": {
+        "ServerHost": "irc.chat.twitch.tv",
+        "ServerPort": 6697,
+        "ClientCapabilities": [
+            ":twitch.tv/membership",
+            ":twitch.tv/tags",
+            ":twitch.tv/commands"
+        ],
+        "ClientNickname": "",
+        "ClientChannel": ""
+    }
+}

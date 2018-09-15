@@ -3,7 +3,6 @@ package clientlib
 import (
     "fmt"
     "log"
-    "os"
     "strings"
     "github.com/lrstanley/girc"
     "twitchbot-go/lib/configlib"
@@ -19,10 +18,9 @@ func New(config configlib.Config) (*girc.Client, error) {
         Server:         config.Irc.ServerHost,
         Port:           config.Irc.ServerPort,
         SSL:            true,
-        ServerPass:     fmt.Sprintf("oauth:%s", config.Irc.Token),
+        ServerPass:     fmt.Sprintf("oauth:%s", config.Authorization.Token),
         Nick:           strings.ToLower(config.Irc.ClientNickname),
         User:           strings.ToLower(config.Irc.ClientNickname),
-        Debug:          os.Stdout,
         SupportedCaps:  supported_caps,
     })
 

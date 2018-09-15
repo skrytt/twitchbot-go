@@ -16,7 +16,7 @@ func main() {
 
     util.PrintAuthorizationUrl(config)
 
-    if config.Irc.Token == "" {
+    if config.Authorization.Token == "" {
         log.Fatalf("Exiting because Irc.Token needs to be set in the config.")
     }
 
