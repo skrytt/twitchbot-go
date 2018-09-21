@@ -26,17 +26,21 @@ func New(config configlib.Config) (*girc.Client, error) {
 
     // Add handlers
     client.Handlers.Add(girc.CONNECTED, func(c *girc.Client, e girc.Event) {
-        log.Printf("Connected to '%s:%d'", config.Irc.ServerHost, config.Irc.ServerPort)
-
-        // Try to join the configured channel
-        c.Cmd.Join(fmt.Sprintf("#%s", strings.ToLower(config.Irc.ClientChannel)))
+        channel_to_join := fmt.Sprintf("#%s", strings.ToLower(config.Irc.ClientChannel))
+        log.Printf("Connected to '%s:%d', joining %s...",
+                   config.Irc.ServerHost, config.Irc.ServerPort, channel_to_join)
+        c.Cmd.Join(channel_to_join)
     })
 
     client.Handlers.Add(girc.JOIN, func(c *girc.Client, e girc.Event) {
         log.Printf("Joined channel '%s'", e.Params[0])
 
-        // For now just say hello
-        c.Cmd.Message(e.Params[0], fmt.Sprintf("Hello it's me, %s", config.Irc.ClientNickname))
+    })
+
+    client.Handlers.Add(girc.PRIVMSG, func(c *girc.Client, e girc.Event) {
+        if strings.HasPrefix(e.Trailing, "!ping") {
+            c.Cmd.Reply(e, "pong!")
+        }
     })
 
     // Actually try to connect
