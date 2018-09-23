@@ -13,8 +13,14 @@ import (
     "time"
 )
 
+const max_cached_api_data_age time.Duration = 3600 * time.Second;
 var _api_data_handle *ApiDataHandle;
-const max_cached_data_age time.Duration = 3600;
+var _competitor_data_map *map[string]Competitor
+
+func invalidateCachedData() {
+    _api_data_handle = nil
+    _competitor_data_map = nil
+}
 
 // Teams
 
@@ -118,7 +124,7 @@ type ApiDataHandle struct {
 func GetApiData() (*ApiDataHandle, error) {
     // We cache the API data to avoid repeatedly downloading it.
     // Check if our cached version should be updated
-    if _api_data_handle == nil || time.Since(_api_data_handle.Timestamp) > max_cached_data_age {
+    if _api_data_handle == nil || time.Since(_api_data_handle.Timestamp) > max_cached_api_data_age {
         // We'll download a new version of the data
         client := &http.Client{
             Timeout: 10 * time.Second,
@@ -141,21 +147,29 @@ func GetApiData() (*ApiDataHandle, error) {
         if err != nil {
             return nil, err
         }
-
         new_api_data_handle.Timestamp = time.Now()
+
+        // Invalidate caches to force regeneration of data maps
+        invalidateCachedData()
         _api_data_handle = &new_api_data_handle
     }
     return _api_data_handle, nil
 }
 
 func GetCompetitorDataMap() (map[string]Competitor, error) {
-    api_data, err := GetApiData()
-    if err != nil {
-        return make(map[string]Competitor), err
+    if _competitor_data_map == nil {
+        new_competitor_data_map := make(map[string]Competitor)
+
+        api_data, err := GetApiData()
+        if err != nil {
+            return new_competitor_data_map, err
+        }
+
+        for _, competitor := range api_data.Data.Competitors {
+            new_competitor_data_map[competitor.Competitor.Name] = competitor
+        }
+
+        _competitor_data_map = &new_competitor_data_map
     }
-    competitor_data_map := make(map[string]Competitor)
-    for _, competitor := range api_data.Data.Competitors {
-        competitor_data_map[competitor.Competitor.Name] = competitor
-    }
-    return competitor_data_map, nil
+    return *_competitor_data_map, nil
 }
