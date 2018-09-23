@@ -1,10 +1,8 @@
 package main
 
-// Program must be executed in a directory with a "teams.json" file.
-// JSON schema is based on api.overwatchleague.com/teams , as of 21 September 2018.
-
 // Program outputs information about Overwatch League teams/players to stdout,
-// with some basic markdown formatting for readability.
+// sourced from Overwatch League API.
+// Some basic markdown formatting is used for readability.
 
 import (
     "fmt"

@@ -9,6 +9,7 @@ package owlapi
 import (
     "encoding/json"
     "io/ioutil"
+    "net/http"
     "time"
 )
 
@@ -118,19 +119,31 @@ func GetApiData() (*ApiDataHandle, error) {
     // We cache the API data to avoid repeatedly downloading it.
     // Check if our cached version should be updated
     if _api_data_handle == nil || time.Since(_api_data_handle.Timestamp) > max_cached_data_age {
-        bytes_data, err := ioutil.ReadFile("teams.json")
+        // We'll download a new version of the data
+        client := &http.Client{
+            Timeout: 10 * time.Second,
+        }
+
+        response, err := client.Get("https://api.overwatchleague.com/teams")
         if err != nil {
             return nil, err
         }
 
-        new_data := Data{}
-        err = json.Unmarshal(bytes_data, &new_data)
+        bytes_data, err := ioutil.ReadAll(response.Body)
         if err != nil {
             return nil, err
         }
 
-        new_api_data := ApiDataHandle{Data: new_data, Timestamp: time.Now()}
-        _api_data_handle = &new_api_data
+        new_api_data_handle := ApiDataHandle{}
+        new_api_data := &(new_api_data_handle.Data)
+
+        err = json.Unmarshal(bytes_data, &new_api_data)
+        if err != nil {
+            return nil, err
+        }
+
+        new_api_data_handle.Timestamp = time.Now()
+        _api_data_handle = &new_api_data_handle
     }
     return _api_data_handle, nil
 }
