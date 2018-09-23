@@ -40,6 +40,8 @@ func New(config configlib.Config) (*girc.Client, error) {
     client.Handlers.Add(girc.PRIVMSG, func(c *girc.Client, e girc.Event) {
         if strings.HasPrefix(e.Trailing, "!ping") {
             HandlePing(c, e)
+        } else if strings.HasPrefix(e.Trailing, "!ow") {
+            HandleOw(c, e)
         }
     })
 

@@ -10,6 +10,7 @@ import (
     "encoding/json"
     "io/ioutil"
     "net/http"
+    "strings"
     "time"
 )
 
@@ -165,8 +166,14 @@ func GetCompetitorDataMap() (map[string]Competitor, error) {
             return new_competitor_data_map, err
         }
 
+        // Use the lowercased team nicknames as keys.
+        // Assume the last word in the team name is the team nickname.
+        // E.g. for team name "Houston Outlaws", the key is "outlaws" .
         for _, competitor := range api_data.Data.Competitors {
-            new_competitor_data_map[competitor.Competitor.Name] = competitor
+            team_name_args := strings.Split(competitor.Competitor.Name, " ")
+            team_nickname := team_name_args[len(team_name_args)-1]
+            key := strings.ToLower(team_nickname)
+            new_competitor_data_map[key] = competitor
         }
 
         _competitor_data_map = &new_competitor_data_map
