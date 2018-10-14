@@ -1,0 +1,16 @@
+{
+    "teams": {
+        "boston uprising": ["boston", "uprising", "bostonuprising", "buprising", "buprise", "uprise", "bu", "bos", "up", "bostonup"],
+        "dallas fuel": ["dallas", "fuel", "dallasfuel", "dfuel", "df", "dal", "burnblue"],
+        "florida mayhem": ["florida", "mayhem", "floridamayhem", "flmayhem", "fmayhem", "fm", "fla", "bringthemayhem"],
+        "houston outlaws": ["houston", "outlaws", "outlaw", "houstonoutlaws", "houtlaws", "houtlaw", "ho", "hou", "uptheante"],
+        "london spitfire": ["london", "spitfire", "londonspitfire", "ldnspitfire", "lspitfire", "ls", "ldn", "spit", "aceshigh"],
+        "los angeles gladiators": ["gladiators", "gladiator", "losangelesgladiators", "lagladiators", "lagladiator", "lag", "gla", "glad", "shieldsup"],
+        "los angeles valiant": ["valiant", "losangelesvaliant", "lavaliant", "lav", "val", "vally", "valla"],
+        "new york excelsior": ["new york", "excelsior", "newyorkexcelsior", "nyexcelsior", "nyxl", "nxl", "nye", "excel", "xl", "everupward"],
+        "philadelphia fusion": ["philadelphia", "philly", "fusion", "philadelphiafusion", "phillyfusion", "philfusion", "pfusion", "pf", "phi", "phil", "pdomjnate"],
+        "san francisco shock": ["sanfransisco", "shock", "sanfransisco", "sfs", "sanfran", "nrggg"],
+        "seoul dynasty": ["seoul", "dynasty", "seouldynasty", "seodynasty", "sdynasty", "seo", "dyn", "dyna", "dynas", "geng"],
+        "shanghai dragons": ["shanghai", "dragons", "shanghaidragons", "shdragons", "sdragons", "shang", "sha", "shd"]
+    }
+}

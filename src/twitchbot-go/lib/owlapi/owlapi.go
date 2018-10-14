@@ -9,6 +9,7 @@ package owlapi
 import (
     "encoding/json"
     "io/ioutil"
+    "log"
     "net/http"
     "strings"
     "time"
@@ -101,6 +102,10 @@ type Competitor struct {
     }
 }
 
+type Aliases struct {
+    Teams   map[string][]string
+}
+
 type Data struct {
     Id                  int
     AvailableLanguages  []string
@@ -157,23 +162,50 @@ func GetApiData() (*ApiDataHandle, error) {
     return _api_data_handle, nil
 }
 
+// Note: the OWL API refers to teams as "competitors",
+// so we use the same convention here.
 func GetCompetitorDataMap() (map[string]Competitor, error) {
+
+    // Initialize the mapping if required.
     if _competitor_data_map == nil {
         new_competitor_data_map := make(map[string]Competitor)
+
+        // Since competitors are called by nicknames that aren't always present
+        // in the API, we use a configuration file to determine the
+        // mapping of nicknames to competitor objects.
+        var aliases Aliases
+        config_file := "config/aliases.json"
+        raw_alias_data, err := ioutil.ReadFile(config_file)
+        if err != nil {
+            return new_competitor_data_map, err
+        }
+        err = json.Unmarshal(raw_alias_data, &aliases)
+        if err != nil {
+            return new_competitor_data_map, err
+        }
 
         api_data, err := GetApiData()
         if err != nil {
             return new_competitor_data_map, err
         }
 
-        // Use the lowercased team nicknames as keys.
-        // Assume the last word in the team name is the team nickname.
-        // E.g. for team name "Houston Outlaws", the key is "outlaws" .
+        log.Printf("Building map of competitors...")
         for _, competitor := range api_data.Data.Competitors {
-            team_name_args := strings.Split(competitor.Competitor.Name, " ")
-            team_nickname := team_name_args[len(team_name_args)-1]
-            key := strings.ToLower(team_nickname)
-            new_competitor_data_map[key] = competitor
+
+            // Use the lowercased competitor names as a key to look up aliases..
+            competitor_name := competitor.Competitor.Name
+            competitor_name_lc := strings.ToLower(competitor_name)
+
+            competitor_aliases, present := aliases.Teams[competitor_name_lc]
+            if present {
+                log.Printf("Mapping aliases for '%s'", competitor_name)
+                for _, competitor_alias := range competitor_aliases {
+                    competitor_alias_lc := strings.ToLower(competitor_alias)
+                    new_competitor_data_map[competitor_alias_lc] = competitor
+                }
+            } else {
+                log.Printf("No aliases configured for '%s'", competitor_name)
+            }
         }
 
         _competitor_data_map = &new_competitor_data_map
